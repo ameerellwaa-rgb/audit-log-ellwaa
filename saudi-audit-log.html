@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سجل تعديلات السعودية</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1e2433;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #1a6b3c, #22c55e);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .header-text p {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .project-info {
+    background: #161b27;
+    border: 1px solid #1e2433;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .project-info .label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .project-info .value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22c55e;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: #161b27;
+    border: 1px solid #1e2433;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .stat-card .num {
+    font-size: 28px;
+    font-weight: 900;
+    color: #22c55e;
+    line-height: 1;
+  }
+
+  .stat-card .desc {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #1e2433;
+    background: #161b27;
+    color: #94a3b8;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn.active, .filter-btn:hover {
+    background: #22c55e;
+    color: #0f1117;
+    border-color: #22c55e;
+    font-weight: 700;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #1e2433;
+    background: #161b27;
+    color: #e2e8f0;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .search-box::placeholder { color: #475569; }
+  .search-box:focus { border-color: #22c55e; }
+
+  .log-table {
+    background: #161b27;
+    border: 1px solid #1e2433;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .log-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .log-table thead th {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #0f1117;
+    border-bottom: 1px solid #1e2433;
+  }
+
+  .log-table tbody tr {
+    border-bottom: 1px solid #1a2030;
+    transition: background 0.15s;
+  }
+
+  .log-table tbody tr:last-child { border-bottom: none; }
+  .log-table tbody tr:hover { background: #1a2030; }
+
+  .log-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .field-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #1e3a5f;
+    color: #60a5fa;
+  }
+
+  .old-value {
+    color: #f87171;
+    font-size: 12px;
+    font-family: monospace;
+    background: #2d1515;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .new-value {
+    color: #4ade80;
+    font-size: 12px;
+    font-family: monospace;
+    background: #152d1d;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .empty-value {
+    color: #475569;
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  .timestamp {
+    color: #64748b;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: #64748b;
+  }
+
+  .loading .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #1e2433;
+    border-top-color: #22c55e;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px;
+    color: #475569;
+  }
+
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .error-state {
+    text-align: center;
+    padding: 40px;
+    color: #f87171;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-top: 1px solid #1e2433;
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .page-btns { display: flex; gap: 6px; }
+
+  .page-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #1e2433;
+    background: #0f1117;
+    color: #94a3b8;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+
+  .page-btn:hover, .page-btn.active {
+    background: #22c55e;
+    color: #0f1117;
+    border-color: #22c55e;
+    font-weight: 700;
+  }
+
+  .page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    body { padding: 12px; }
+    .log-table td, .log-table th { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🇸🇦</div>
+  <div class="header-text">
+    <h1>سجل تعديلات قسم السعودية</h1>
+    <p id="project-subtitle">جاري التحميل...</p>
+  </div>
+</div>
+
+<div class="project-info">
+  <div>
+    <div class="label">اسم المشروع</div>
+    <div class="value" id="project-name">—</div>
+  </div>
+  <div style="margin-right: auto;">
+    <div class="label">كود المشروع</div>
+    <div class="value" id="project-id" style="color:#60a5fa;">—</div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat-card">
+    <div class="num" id="total-changes">—</div>
+    <div class="desc">إجمالي التعديلات</div>
+  </div>
+  <div class="stat-card">
+    <div class="num" id="total-fields">—</div>
+    <div class="desc">حقول تم تعديلها</div>
+  </div>
+  <div class="stat-card">
+    <div class="num" id="last-change">—</div>
+    <div class="desc">آخر تعديل</div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <input class="search-box" type="text" id="search" placeholder="🔍 ابحث في السجل..." oninput="filterAndRender()">
+  <button class="filter-btn active" onclick="setFilter('all', this)">الكل</button>
+  <button class="filter-btn" onclick="setFilter('Email Maysa', this)">إيميل ميسا</button>
+  <button class="filter-btn" onclick="setFilter('Password Maysa', this)">باسورد ميسا</button>
+  <button class="filter-btn" onclick="setFilter('User Maysa', this)">يوزر ميسا</button>
+  <button class="filter-btn" onclick="setFilter('Req Tarkhees', this)">رقم الترخيص</button>
+</div>
+
+<div class="log-table">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>جاري تحميل السجل...</p>
+  </div>
+  <table id="log-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>التوقيت</th>
+        <th>الحقل</th>
+        <th>القيمة القديمة</th>
+        <th>القيمة الجديدة</th>
+      </tr>
+    </thead>
+    <tbody id="log-body"></tbody>
+  </table>
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <div class="icon">📭</div>
+    <p>لا توجد تعديلات مسجلة لهذا المشروع</p>
+  </div>
+  <div class="error-state" id="error-state" style="display:none;">
+    <p>⚠️ حدث خطأ في تحميل البيانات</p>
+  </div>
+  <div class="pagination" id="pagination" style="display:none;">
+    <span id="page-info"></span>
+    <div class="page-btns" id="page-btns"></div>
+  </div>
+</div>
+
+<script>
+const AUDIT_URL = "https://raw.githubusercontent.com/ameerellwaa-rgb/audit-log-ellwaa/main/kw_auditlog.json";
+const PAGE_SIZE = 20;
+
+let allLogs = [];
+let filteredLogs = [];
+let currentFilter = 'all';
+let currentPage = 1;
+
+const fieldLabels = {
+  'Email Maysa': 'إيميل ميسا',
+  'User Maysa': 'يوزر ميسا',
+  'Password Maysa': 'باسورد ميسا',
+  'Req Tarkhees': 'رقم طلب الترخيص',
+  'Email Markaz': 'إيميل المركز السعودي',
+  'Password Markaz': 'باسورد المركز السعودي',
+  'Req Aqd': 'رقم طلب العقد',
+  'Name Arabic': 'الاسم التجاري العربي',
+  'Name English': 'الاسم التجاري الانجليزي',
+  'Req Hagz': 'رقم طلب حجز الاسم'
+};
+
+function getProjectId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('project');
+}
+
+async function loadData() {
+  const projectId = getProjectId();
+
+  if (!projectId) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+    document.getElementById('error-state').innerHTML = '<p>⚠️ لم يتم تحديد كود المشروع</p>';
+    return;
+  }
+
+  try {
+    const resp = await fetch(AUDIT_URL + '?t=' + Date.now());
+    if (!resp.ok) throw new Error('fetch failed');
+    const data = await resp.json();
+
+    allLogs = data.filter(r => r.Project_ID === projectId).reverse();
+
+    if (allLogs.length > 0) {
+      document.getElementById('project-name').textContent = allLogs[0].Project_Name || '—';
+      document.getElementById('project-id').textContent = projectId;
+      document.getElementById('project-subtitle').textContent = 'عرض سجل التعديلات الخاصة بهذا المشروع';
+
+      const uniqueFields = [...new Set(allLogs.map(r => r.Field_Name))];
+      document.getElementById('total-changes').textContent = allLogs.length;
+      document.getElementById('total-fields').textContent = uniqueFields.length;
+      document.getElementById('last-change').textContent = allLogs[0].Timestamp?.split(' ')[0] || '—';
+    } else {
+      document.getElementById('project-subtitle').textContent = 'لا توجد بيانات';
+      document.getElementById('total-changes').textContent = '0';
+      document.getElementById('total-fields').textContent = '0';
+      document.getElementById('last-change').textContent = '—';
+    }
+
+    filterAndRender();
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  currentPage = 1;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAndRender();
+}
+
+function filterAndRender() {
+  const search = document.getElementById('search').value.toLowerCase();
+
+  filteredLogs = allLogs.filter(r => {
+    const matchFilter = currentFilter === 'all' || r.Field_Name === currentFilter;
+    const matchSearch = !search ||
+      r.Field_Name?.toLowerCase().includes(search) ||
+      r.Old_Value?.toLowerCase().includes(search) ||
+      r.New_Value?.toLowerCase().includes(search) ||
+      r.Timestamp?.toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  renderPage();
+}
+
+function renderPage() {
+  const loading = document.getElementById('loading');
+  const table = document.getElementById('log-table');
+  const empty = document.getElementById('empty-state');
+  const pagination = document.getElementById('pagination');
+  const body = document.getElementById('log-body');
+
+  loading.style.display = 'none';
+
+  if (filteredLogs.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    pagination.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  table.style.display = 'table';
+
+  const totalPages = Math.ceil(filteredLogs.length / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageData = filteredLogs.slice(start, start + PAGE_SIZE);
+
+  body.innerHTML = pageData.map(r => `
+    <tr>
+      <td><span class="timestamp">${r.Timestamp || '—'}</span></td>
+      <td><span class="field-badge">${fieldLabels[r.Field_Name] || r.Field_Name}</span></td>
+      <td>${r.Old_Value ? `<span class="old-value">${r.Old_Value}</span>` : '<span class="empty-value">فارغ</span>'}</td>
+      <td>${r.New_Value ? `<span class="new-value">${r.New_Value}</span>` : '<span class="empty-value">فارغ</span>'}</td>
+    </tr>
+  `).join('');
+
+  if (totalPages > 1) {
+    pagination.style.display = 'flex';
+    document.getElementById('page-info').textContent = `صفحة ${currentPage} من ${totalPages} — ${filteredLogs.length} تعديل`;
+
+    const btns = document.getElementById('page-btns');
+    btns.innerHTML = '';
+
+    const prev = document.createElement('button');
+    prev.className = 'page-btn';
+    prev.textContent = 'السابق';
+    prev.disabled = currentPage === 1;
+    prev.onclick = () => { currentPage--; renderPage(); };
+    btns.appendChild(prev);
+
+    const maxBtns = Math.min(totalPages, 5);
+    for (let i = 1; i <= maxBtns; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+      btn.textContent = i;
+      btn.onclick = ((p) => () => { currentPage = p; renderPage(); })(i);
+      btns.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.className = 'page-btn';
+    next.textContent = 'التالي';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => { currentPage++; renderPage(); };
+    btns.appendChild(next);
+  } else {
+    pagination.style.display = 'none';
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
