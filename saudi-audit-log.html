@@ -223,6 +223,13 @@
     white-space: nowrap;
   }
 
+  .updated-by {
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
   .loading {
     text-align: center;
     padding: 60px;
@@ -339,9 +346,15 @@
   <input class="search-box" type="text" id="search" placeholder="🔍 ابحث في السجل..." oninput="filterAndRender()">
   <button class="filter-btn active" onclick="setFilter('all', this)">الكل</button>
   <button class="filter-btn" onclick="setFilter('Email Maysa', this)">إيميل ميسا</button>
-  <button class="filter-btn" onclick="setFilter('Password Maysa', this)">باسورد ميسا</button>
   <button class="filter-btn" onclick="setFilter('User Maysa', this)">يوزر ميسا</button>
+  <button class="filter-btn" onclick="setFilter('Password Maysa', this)">باسورد ميسا</button>
   <button class="filter-btn" onclick="setFilter('Req Tarkhees', this)">رقم الترخيص</button>
+  <button class="filter-btn" onclick="setFilter('Email Markaz', this)">إيميل المركز</button>
+  <button class="filter-btn" onclick="setFilter('Password Markaz', this)">باسورد المركز</button>
+  <button class="filter-btn" onclick="setFilter('Req Aqd', this)">رقم العقد</button>
+  <button class="filter-btn" onclick="setFilter('Name Arabic', this)">الاسم العربي</button>
+  <button class="filter-btn" onclick="setFilter('Name English', this)">الاسم الانجليزي</button>
+  <button class="filter-btn" onclick="setFilter('Req Hagz', this)">رقم حجز الاسم</button>
 </div>
 
 <div class="log-table">
@@ -353,6 +366,7 @@
     <thead>
       <tr>
         <th>التوقيت</th>
+        <th>بواسطة</th>
         <th>الحقل</th>
         <th>القيمة القديمة</th>
         <th>القيمة الجديدة</th>
@@ -492,6 +506,7 @@ function renderPage() {
   body.innerHTML = pageData.map(r => `
     <tr>
       <td><span class="timestamp">${r.Timestamp || '—'}</span></td>
+      <td><span class="updated-by">${r.Updated_By || '—'}</span></td>
       <td><span class="field-badge">${fieldLabels[r.Field_Name] || r.Field_Name}</span></td>
       <td>${r.Old_Value ? `<span class="old-value">${r.Old_Value}</span>` : '<span class="empty-value">فارغ</span>'}</td>
       <td>${r.New_Value ? `<span class="new-value">${r.New_Value}</span>` : '<span class="empty-value">فارغ</span>'}</td>
